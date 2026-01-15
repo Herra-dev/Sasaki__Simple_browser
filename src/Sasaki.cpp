@@ -198,7 +198,7 @@ void Sasaki::SaddActionToNavigationSubMenu()
             return;
         }
 
-        title.push_back(new QAction(SfirstString(string)));
+        title.push_back(new QAction(SfirstString(string), this));
         m_recentLinkSubMenu->addAction(title.back());
 
         QObject::connect(title.back(), &QAction::triggered, this, [=]() { this->sl_runUrl(SlastString(string)); });
@@ -621,26 +621,14 @@ bool Sasaki::isPreferred()
 
 ///----------------------------------------------------------------------
 
-void Sasaki::saveSettings()
+void Sasaki::SloadSetings()
 {
+    if(page.size() < 1) // if there is no page yet, quit fuction
+        return;
+
     QSettings saki_settings;
 
-    if(page.size() > 0)
-    {
-        get_currentWebView()->settings()->setAttribute(QWebEngineSettings::JavascriptEnabled, true);
-        saki_settings.setValue("web/javascript", get_currentWebView()->settings()->testAttribute(QWebEngineSettings::JavascriptEnabled));
-    }
-}
-
-
-///----------------------------------------------------------------------
-
-void Sasaki::loadSettings()
-{
-    QSettings saki_settings;
-    std::cout << saki_settings.value("web/javascript").toBool() << std::endl;
-    if(page.size() > 0)
-        get_currentWebView()->settings()->setAttribute(QWebEngineSettings::JavascriptEnabled, saki_settings.value("web/javascript").toBool());
+    get_currentWebView()->settings()->setAttribute(QWebEngineSettings::JavascriptEnabled, saki_settings.value("web/AutoLoadImages").toBool());
 }
 
 ///----------------------------------------------------------------------
@@ -947,9 +935,6 @@ int Sasaki::sl_loadFinished(const bool ok)
     SaddActionToNavigationSubMenu();
     isPreferred();
     sl_searchInPage(m_searchEdit->text());
-
-    saveSettings();
-    loadSettings();
 
     return SUCCESS;
 }
@@ -1314,7 +1299,7 @@ void Sasaki::sl_searchInPage(QString str)
 
 int Sasaki::sl_openFavorite()
 {
-    Settings *st = new Settings(this);
+    Settings *st = new Settings(get_currentWebView(), this);
     st->exec();
 
 //    if(st->get_m_urlToRun().toString().isEmpty())

@@ -87,8 +87,7 @@ public:
 
     void SReadWriteHistory();
     bool isPreferred();
-    void saveSettings();
-    void loadSettings();
+    void SloadSetings();
 
     /// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
     /// STATIC METHODS
