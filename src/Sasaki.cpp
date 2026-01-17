@@ -31,6 +31,7 @@ Sasaki::Sasaki(QWidget *parent): QMainWindow(parent),
     m_actionHistory(nullptr),
     m_actionClearHistory(nullptr),
     m_actionFavorite(nullptr),
+    m_actionSettings(nullptr),
     m_toolBar(nullptr),
     m_urlEdit(nullptr),
     m_searchEdit(nullptr),
@@ -272,6 +273,7 @@ void Sasaki::ScreateAction()
     m_actionHistory = new QAction(tr("&History"), this);
     m_actionClearHistory = new QAction(tr("Clear history"), this);
     m_actionFavorite = new QAction(tr("&Favorite page"), this);
+    m_actionSettings = new QAction(tr("&Settings"), this);
 }
 
 ///----------------------------------------------------------------------
@@ -346,6 +348,7 @@ void Sasaki::SaddActionToMenu()
         m_settingMenu->addAction(m_actionHistory);
         m_settingMenu->addAction(m_actionClearHistory);
         m_settingMenu->addAction(m_actionFavorite);
+        m_settingMenu->addAction(m_actionSettings);
     }
 }
 
@@ -373,6 +376,7 @@ void Sasaki::SconnectAction()
     QObject::connect(m_actionHistory, SIGNAL(triggered(bool)), this, SLOT(sl_openHistory()));
     QObject::connect(m_actionClearHistory, SIGNAL(triggered(bool)), this, SLOT(sl_clearHistory()));
     QObject::connect(m_actionFavorite, SIGNAL(triggered(bool)), this, SLOT(sl_openFavorite()));
+    QObject::connect(m_actionSettings, SIGNAL(triggered(bool)), this, SLOT(sl_openSettings()));
 }
 
 ///----------------------------------------------------------------------
@@ -1346,17 +1350,17 @@ void Sasaki::sl_searchInPage(QString str)
 
 int Sasaki::sl_openFavorite()
 {
-    Settings *st = new Settings(get_currentWebView(), this);
+    Star *st = new Star(this);
     st->exec();
 
-//    if(st->get_m_urlToRun().toString().isEmpty())
-//    {
-//        delete st;
-//        st = nullptr;
-//        return FAILURE;
-//    }
+    if(st->get_m_urlToRun().toString().isEmpty())
+    {
+        delete st;
+        st = nullptr;
+        return FAILURE;
+    }
 
-//    sl_runUrl(st->get_m_urlToRun().toString().simplified());
+    sl_runUrl(st->get_m_urlToRun().toString().simplified());
 
 
     delete st;
@@ -1365,3 +1369,13 @@ int Sasaki::sl_openFavorite()
     return SUCCESS;
 }
 
+///----------------------------------------------------------------------
+
+void Sasaki::sl_openSettings()
+{
+    Settings *st = new Settings(get_currentWebView(), this);
+    st->exec();
+
+    delete st;
+    st = nullptr;
+}

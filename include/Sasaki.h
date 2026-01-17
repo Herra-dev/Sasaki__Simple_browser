@@ -5,7 +5,7 @@
 #include "WebView.h"
 #include "StatusBar.h"
 #include "History.h"
-//#include "Star.h"
+#include "Star.h"
 #include "Settings.h"
 
 /// = = = = = C++
@@ -124,6 +124,7 @@ protected:
     QAction *m_actionHistory;
     QAction *m_actionClearHistory;
     QAction *m_actionFavorite;
+    QAction *m_actionSettings;
 
     ///---------- tool bar
     QToolBar *m_toolBar;
@@ -182,6 +183,7 @@ public slots:
     bool sl_notFavoritePage();
     void sl_searchInPage(QString str);
     int sl_openFavorite();
+    void sl_openSettings();
 
 signals:
     void sig_canGoBack();
