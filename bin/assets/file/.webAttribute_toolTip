@@ -1,0 +1,36 @@
+0-Automatically dowloads images for web pages
+1-Enables the running of JavaScript programs 
+2-Allows JavaScript programs to open popup windows without user interaction
+3-Allows JavaScript programs to write (copy) sanitized content to the clipboard
+4-Includes hyperlinks in the keyboard focus chain
+5-Enables support for the HTML 5 local storage feature
+6-Allows local origin documents to access remote resources that would normally be blocked
+8-Enables the Spatial Navigation feature, which means the ability to navigate between focusable elements, such as hyperlinks and form controls, on a web page by using the Left, Right, Up and Down arrow keys
+9-Allows locally loaded documents to access other local URLs
+10-Enables support for the ping attribute for hyperlinks
+11-Enables animated scrolling
+12-Enables displaying the built-in error pages of Chromium
+13-Enables support for Pepper plugins, such as the Flash player
+14-Enables fullscreen support in an application
+15-Enables screen capture in an application
+16-Enables support for HTML 5 WebGL
+17-Specifies whether the HTML5 2D canvas should be a OpenGL framebuffer. This makes many painting operations faster, but slows down pixel access
+18-Automatically downloads icons for web pages
+19-Enables support for touch icons and precomposed touch icons
+20-Gives focus to the view associated with the page, whenever a navigation operation occurs (load, stop, reload, reload and bypass cache, forward, backward, set content, and so on)
+21-Turns on printing of CSS backgrounds when printing a web page
+22-By default, HTTPS pages cannot run JavaScript, CSS, plugins or web-sockets from HTTP URLs
+23-Since Qt 5.7, only secure origins such as HTTPS have been able to request Geolocation features. This provides an override to allow non secure origins to access Geolocation again
+24-Allows activating windows by using the window.focus() JavaScript method
+25-Shows scroll bars
+26-Inhibits playback of media content until the user interacts with the page
+27-Limits WebRTC to public IP addresses only
+28-Allows JavaScript programs to read (paste) from the clipboard and to write unsanitized content
+29-Specifies whether WebEngine will try to pre-fetch DNS entries to speed up browsing
+30-Specifies that PDF documents will be opened in the internal PDF viewer instead of being downloaded
+31-Specifies that navigations can be triggered by dropping URLs on the view
+32-Specifies that reading from all canvas elements is enabled. This setting will have impact on all HTML5 canvas elements irrespective of origin, and can be disabled to prevent canvas fingerprinting
+33-Specifies that all web contents will be rendered using a dark theme
+34-Specifies that printing results will contain basic page information (URL, title, date, page number) in header and footer area. It is the embedder's responsibility to provide enough space for these texts by setting proper top and bottom margins
+35-Turns on preferring CSS margins over the margins of the specified QPageLayout
+36-Enables support for JavaScript touch events API, meaning ontouchstart, ontouchend and ontouchmove handlers will be present in the document

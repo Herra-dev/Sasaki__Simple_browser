@@ -1,0 +1,36 @@
+0-Auto load images
+1-enable JavaScript
+2-Javascript can open Windows
+3-Javascript can access clipboard
+4-Includes hyperlinks in the keyboard focus chain
+5-Enable local storage
+6-Local content can access remote Urls
+8-Enable spatial navigation
+9-Includes hyperlinks in the keyboard focus chain
+10-Enable hyperlink auditing
+11-Enable scroll Animator
+12-Enable error page
+13-Enable plugins
+14-Enable fullScreen support
+15-Enable screen capture
+16-Enable webGL
+17-Enable Accelerated2dCanvasEnabled
+18-Auto load icons for page
+19-Enable touch icons
+20-Focus on navigation
+21-Print element backgrounds
+22-Allow running insecure content
+23-Allow geolocation on insecure origins
+24-Allow window activation from javaScript
+25-Show scrollBars
+26-Playback requires user gesture
+27-WebRTC public interfaces only
+28-Allow Javascript to paste
+29-Enable Dns prefetch
+30-Enable pdf viewer
+31-Enable navigate on drop
+32-Enable reading from canvas
+33-Force dark mode
+34-Print header and footer
+35-Prefer CSS margins for printing
+36-Enable touch events Api
