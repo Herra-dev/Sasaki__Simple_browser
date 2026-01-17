@@ -33,7 +33,7 @@ Star::~Star()
 
 QUrl Star::get_m_urlToRun()
 {
-    return *m_urlToRun;
+    return (m_urlToRun != nullptr) ? *m_urlToRun : QUrl();
 }
 
 //-----------------------------------------------------------------------------

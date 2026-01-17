@@ -7,6 +7,7 @@
 #include <QWebEngineView>
 #include <QVBoxLayout>
 #include <QWebEngineSettings>
+#include <QCoreApplication>
 
 class WebView: public QWidget
 {
@@ -24,7 +25,6 @@ protected:
     int m_objectId;
     QVBoxLayout *m_layout;
     QWebEngineView *m_view;
-    QWebEngineSettings *webSettings;
 
 };
 

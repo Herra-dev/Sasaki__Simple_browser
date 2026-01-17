@@ -96,9 +96,7 @@ bool History::clearHistory()
 
     while(title.count() > 0)
     {
-        QPushButton *temp = nullptr;
-        temp = title.back();
-        title.erase(title.end()); // first, clear the QList
+        QPushButton *temp = title.takeLast();
 
         delete temp;
         temp = nullptr;
