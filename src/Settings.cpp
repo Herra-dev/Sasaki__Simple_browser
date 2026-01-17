@@ -35,6 +35,9 @@ Settings::Settings(QWebEngineView *page, QWidget *parent): QDialog(parent), actu
 
 Settings::~Settings()
 {
+    delete actualPage;
+    actualPage = nullptr;
+
     std::cout << "settings destroyed" << std::endl;
 }
 
