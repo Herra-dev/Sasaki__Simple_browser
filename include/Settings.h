@@ -1,6 +1,10 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+// = = = = Locale
+#include "Sasaki.h"
+#include "Settings.h"
+
 // = = = = C++
 #include <iostream>
 
@@ -18,6 +22,9 @@
 #include <QWebEngineSettings>
 #include <QObject>
 #include <QLabel>
+#include <QStringList>
+#include <QFile>
+#include <QList>
 
 class Settings: public QDialog
 {
@@ -28,13 +35,12 @@ public:
     ~Settings();
 
     void initialiseProperties();
-    void configureGlobalWidgets();
-    void configurePageSettings();
     void addWidgetToMainLayout();
     void addWidgetToSettingsLayout();
     void addWidgetToControlLayout();
-    void addWidgetToSettingsPageLayout();
-    void connectWidget();
+    void addCheckBox();
+
+    void loadSettings(QWebEngineView *page = nullptr);
 
 protected:
     QWebEngineView *actualPage;
@@ -58,18 +64,12 @@ protected:
     QLabel *m_settingsLog;
 
     //page settings ---------------------------------------------------------------
-
-    QCheckBox *m_checkAutoLoadImages;
-    QCheckBox *m_checkJavascriptEnabled;
-    QCheckBox *m_checkJavascriptCanOpenWindows;
-
+    QList<QCheckBox *> m_checkBox;
 
     //---------------------------------------------------------------
 
 public slots:
-    void sl_autoLoadImages(bool checked);
-    void sl_javascriptEnabled(bool checked);
-    void sl_javascriptCanOpenWindows(bool checked);
+    void sl_setAttribute(QWebEngineSettings::WebAttribute attribute, QString key, bool checked);
 
 };
 

@@ -223,6 +223,13 @@ QString Sasaki::SfirstString(QString string) // static method
 
 ///----------------------------------------------------------------------
 
+QString Sasaki::SfirstString(QString string, QString separator)
+{
+    return string.sliced(0, string.indexOf(separator)).simplified();
+}
+
+///----------------------------------------------------------------------
+
 /**
  * @brief Sasaki::SlastString
  * @param string
@@ -233,6 +240,15 @@ QString Sasaki::SlastString(QString string) // static method
     QString st = SEPARATOR;
 
     return string.sliced(string.indexOf(st) + st.size()).simplified(); //Returns a string that has whitespace removed from the start and the end,
+}
+
+///----------------------------------------------------------------------
+
+QString Sasaki::SlastString(QString string, QString separator)
+{
+    QString st = separator;
+
+    return string.sliced(string.indexOf(st) + st.size()).simplified();
 }
 
 ///----------------------------------------------------------------------
@@ -559,7 +575,7 @@ void Sasaki::SReadWriteHistory()
         if(write->isOpen())
         {
             QTextStream *out = new QTextStream(write);
-            *out << get_currentWebView()->title() << SEPARATOR << get_currentWebView()->url().toString() << "\n"; // write the QWebEngineView's title and url in the history file using an Object QTextStream out
+            *out << get_currentWebView()->title().simplified() << SEPARATOR << get_currentWebView()->url().toString().simplified() << "\n"; // write the QWebEngineView's title and url in the history file using an Object QTextStream out
             *out << st;
 
             delete out;
@@ -618,14 +634,45 @@ bool Sasaki::isPreferred()
 
 ///----------------------------------------------------------------------
 
-void Sasaki::SloadSetings()
+void Sasaki::loadSettings(QWebEngineView *page)
 {
-    if(page.size() < 1) // if there is no page yet, quit fuction
+    QSettings saki_settings;
+    QFile *readWebAttribute = new QFile("assets/file/.webAttribute_key");
+
+    if(!(readWebAttribute->open(QIODeviceBase::ReadOnly)))
         return;
 
-    QSettings saki_settings;
+    QStringList list(saki_settings.allKeys());
+    QList<QString> keyTable;
+    QList<QString> value;
 
-    get_currentWebView()->settings()->setAttribute(QWebEngineSettings::JavascriptEnabled, saki_settings.value("web/JavascriptEnabled").toBool());
+    while(!readWebAttribute->atEnd())
+    {
+        QString str = readWebAttribute->readLine().simplified();
+        keyTable.push_back(Sasaki::SlastString(str, "-").simplified());
+        value.push_back(Sasaki::SfirstString(str, "-").simplified());
+    }
+
+    int i(0);
+    bool on(false);
+
+    while(i < keyTable.size())
+    {
+        if(list.contains(keyTable[i]))
+        {
+            on = saki_settings.value(keyTable[i]).toBool();
+
+            if(page != nullptr)
+                page->settings()->setAttribute(static_cast<QWebEngineSettings::WebAttribute>(value[i].toInt()), on);
+        }
+
+        i++;
+    }
+
+    readWebAttribute->close();
+
+    delete readWebAttribute;
+    readWebAttribute = nullptr;
 }
 
 ///----------------------------------------------------------------------
@@ -932,6 +979,9 @@ int Sasaki::sl_loadFinished(const bool ok)
     SaddActionToNavigationSubMenu();
     isPreferred();
     sl_searchInPage(m_searchEdit->text());
+    loadSettings(get_currentWebView());
+
+
 
     return SUCCESS;
 }
@@ -1170,7 +1220,7 @@ int Sasaki::sl_addPageToFavorite(bool ok)
     {
         QTextStream *out = new QTextStream(read);
 
-        *out << get_currentWebView()->title() << SEPARATOR << get_currentWebView()->url().toString() << "\n";
+        *out << get_currentWebView()->title().simplified() << SEPARATOR << get_currentWebView()->url().toString().simplified() << "\n";
         m_actionPreferedPage->setIcon(QIcon("assets/icons/yellowStar.png"));
 
         std::cout << "page added to favorite" << std::endl;

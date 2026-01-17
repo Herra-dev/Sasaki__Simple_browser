@@ -8,7 +8,7 @@ Star::Star(QWidget *parent): QDialog(parent),
 
 {
     setWindowTitle("Favorite page(s)");
-    setFixedSize(280, 350);
+    setMinimumSize(500, 600);
 
     //initialise properties
     //read file

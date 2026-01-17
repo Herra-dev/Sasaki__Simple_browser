@@ -2,7 +2,6 @@
 #define HISTORY_H
 
 // = = = = Locale
-
 #include "Sasaki.h"
 
 // = = = = C++

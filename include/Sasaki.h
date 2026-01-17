@@ -87,13 +87,16 @@ public:
 
     void SReadWriteHistory();
     bool isPreferred();
-    void SloadSetings();
+    void loadSettings(QWebEngineView *page = nullptr);
 
     /// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
     /// STATIC METHODS
 
     static QString SfirstString(QString string);
+    static QString SfirstString(QString string, QString separator);
     static QString SlastString(QString string);
+    static QString SlastString(QString string, QString separator);
+
 
 protected:
     /// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

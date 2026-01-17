@@ -9,7 +9,7 @@ History::History(QWidget *parent): QDialog(parent),
     scroll(nullptr)
 {
     setWindowTitle("History");
-    setFixedSize(280, 350);
+    setMinimumSize(500, 600);
 
     group = new QGroupBox("History", this);
     m_historyUrlToRun = new QUrl;
@@ -22,10 +22,10 @@ History::History(QWidget *parent): QDialog(parent),
 
     if(title.isEmpty()) // if no history was found
     {
-        QLabel *noHistoryFound = new QLabel("No history found", this);
-        noHistoryFound->setFont(QFont("Times"));
+        QLabel noHistoryFound("No history found");
+        noHistoryFound.setFont(QFont("Times"));
 
-        m_layout->addWidget(noHistoryFound);
+        m_layout->addWidget(&noHistoryFound);
         std::cout << "No history" << std::endl;
     }
 
@@ -59,7 +59,7 @@ void History::updateHistory()
     clearHistory(); // first, clear history (QPushButton)
 
     QFile *read = new QFile("assets/file/history.txt", this);
-    if(!(read->open(QIODeviceBase::ReadOnly, QFileDevice::ReadOwner))) // quit function if an error has occured (cannot open history file)
+    if(!(read->open(QIODeviceBase::ReadOnly, QFileDevice::ReadOwner))) // quit function if an error occured (cannot open history file)
     {
         return;
     }
