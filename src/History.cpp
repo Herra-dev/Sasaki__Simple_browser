@@ -98,8 +98,7 @@ bool History::clearHistory()
     {
         QPushButton *temp = title.takeLast();
 
-        delete temp;
-        temp = nullptr;
+        temp->deleteLater();
     }
 
     return true;

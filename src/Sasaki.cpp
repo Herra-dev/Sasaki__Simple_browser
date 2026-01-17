@@ -592,10 +592,7 @@ bool Sasaki::isPreferred()
     QString str;
     str.clear();
 
-    while(!(read->atEnd())) // read all data in read
-    {
-        str = read->readAll(); // save all content of read into str(QString)
-    }
+    str = read->readAll(); // save all content of read into str(QString)
 
     read->close();
 
@@ -628,7 +625,7 @@ void Sasaki::SloadSetings()
 
     QSettings saki_settings;
 
-    get_currentWebView()->settings()->setAttribute(QWebEngineSettings::JavascriptEnabled, saki_settings.value("web/AutoLoadImages").toBool());
+    get_currentWebView()->settings()->setAttribute(QWebEngineSettings::JavascriptEnabled, saki_settings.value("web/JavascriptEnabled").toBool());
 }
 
 ///----------------------------------------------------------------------
