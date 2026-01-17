@@ -1,3 +1,12 @@
+GOLD NAME-url:file:///home/h1534hheasa/etude/navigateur/Sasaki/bin/assets/web/index2.html
+NAME-url:file:///home/h1534hheasa/etude/navigateur/Sasaki/bin/assets/web/index.html
+GOLD NAME-url:file:///home/h1534hheasa/etude/navigateur/Sasaki/bin/assets/web/index2.html
+NAME-url:file:///home/h1534hheasa/etude/navigateur/Sasaki/bin/assets/web/index.html
+GOLD NAME-url:file:///home/h1534hheasa/etude/navigateur/Sasaki/bin/assets/web/index2.html
+NAME-url:file:///home/h1534hheasa/etude/navigateur/Sasaki/bin/assets/web/index.html
+GOLD NAME-url:file:///home/h1534hheasa/etude/navigateur/Sasaki/bin/assets/web/index2.html
+NAME-url:file:///home/h1534hheasa/etude/navigateur/Sasaki/bin/assets/web/index.html
+GOLD NAME-url:file:///home/h1534hheasa/etude/navigateur/Sasaki/bin/assets/web/index2.html
 Herra-dev/Sasaki__Simple_browser: Sasaki is a simple browser created with C++/Qt-url:https://github.com/Herra-dev/Sasaki__Simple_browser
 Herra-dev (Heriniaina)-url:https://github.com/Herra-dev
 Herra-dev (Heriniaina) · GitHub-url:https://github.com/Herra-dev
