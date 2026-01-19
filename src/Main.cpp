@@ -6,7 +6,6 @@
 
 int main(int argc, char **argv)
 {
-    QCoreApplication::setAttribute(Qt::AA_UseSoftwareOpenGL);
     QCoreApplication::setOrganizationName("Carotte");
     QCoreApplication::setApplicationName("Sasaki");
 

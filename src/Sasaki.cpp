@@ -44,6 +44,8 @@ Sasaki::Sasaki(QWidget *parent): QMainWindow(parent),
     m_statusBar(nullptr),
     history(nullptr)
 {
+    setMaximumSize(1500, 800);
+
     ScreateWidget();
     SconfigureWidget();
 
@@ -359,24 +361,23 @@ void Sasaki::SaddActionToMenu()
  */
 void Sasaki::SconnectAction()
 {
-    QObject::connect(m_actionQuit, SIGNAL(triggered(bool)), qApp, SLOT(quit()));
-    QObject::connect(m_actionCloseTab, SIGNAL(triggered(bool)), this, SLOT(sl_removeTab()));
-    QObject::connect(m_actionCloseAllTab, SIGNAL(triggered(bool)), this, SLOT(sl_removeAllTabs()));
-    QObject::connect(m_actionPreviousPage, SIGNAL(triggered(bool)), this, SLOT(sl_back()));
-    QObject::connect(m_actionNextPage, SIGNAL(triggered(bool)), this, SLOT(sl_next()));
-    QObject::connect(m_actionReloadPage, SIGNAL(triggered(bool)), this, SLOT(sl_reload()));
-    QObject::connect(m_actionCancel, SIGNAL(triggered(bool)), this, SLOT(sl_cancelLoading()));
-    QObject::connect(m_actionHome, SIGNAL(triggered(bool)), this, SLOT(sl_returnHome()));
-    QObject::connect(m_actionLaunch, SIGNAL(triggered(bool)), this, SLOT(sl_runUrl()));
-    QObject::connect(m_actionPreferedPage, SIGNAL(toggled(bool)), this, SLOT(sl_addPageToFavorite(bool)));
-    QObject::connect(m_actionPreferedPage, SIGNAL(toggled(bool)), this, SLOT(sl_removePageFromFavorite(bool)));
-    QObject::connect(this, SIGNAL(sig_preferredPage()), this, SLOT(sl_favoritePage()));
-    QObject::connect(this, SIGNAL(sig_notPreferredPage()), this, SLOT(sl_notFavoritePage()));
-
-    QObject::connect(m_actionHistory, SIGNAL(triggered(bool)), this, SLOT(sl_openHistory()));
-    QObject::connect(m_actionClearHistory, SIGNAL(triggered(bool)), this, SLOT(sl_clearHistory()));
-    QObject::connect(m_actionFavorite, SIGNAL(triggered(bool)), this, SLOT(sl_openFavorite()));
-    QObject::connect(m_actionSettings, SIGNAL(triggered(bool)), this, SLOT(sl_openSettings()));
+    QObject::connect(m_actionQuit, &QAction::triggered, qApp, &QApplication::quit);
+    QObject::connect(m_actionCloseTab, &QAction::triggered, [this]() { this->sl_removeTab(); });
+    QObject::connect(m_actionCloseAllTab, &QAction::triggered, this, &Sasaki::sl_removeAllTabs);
+    QObject::connect(m_actionPreviousPage, &QAction::triggered, this, &Sasaki::sl_back);
+    QObject::connect(m_actionNextPage, &QAction::triggered, this, &Sasaki::sl_next);
+    QObject::connect(m_actionReloadPage, &QAction::triggered, this, &Sasaki::sl_reload);
+    QObject::connect(m_actionCancel, &QAction::triggered, this, &Sasaki::sl_cancelLoading);
+    QObject::connect(m_actionHome, &QAction::triggered, this, &Sasaki::sl_returnHome);
+    QObject::connect(m_actionLaunch, &QAction::triggered, [this](){ this->sl_runUrl(); });
+    QObject::connect(m_actionPreferedPage, &QAction::toggled, [this](bool ok) { this->sl_addPageToFavorite(ok); });
+    QObject::connect(m_actionPreferedPage, &QAction::toggled, [this](bool ok){ this->sl_removePageFromFavorite(ok); });
+    QObject::connect(this, &Sasaki::sig_preferredPage, this, &Sasaki::sl_favoritePage);
+    QObject::connect(this, &Sasaki::sig_notPreferredPage, this, &Sasaki::sl_notFavoritePage);
+    QObject::connect(m_actionHistory, &QAction::triggered, this, &Sasaki::sl_openHistory);
+    QObject::connect(m_actionClearHistory, &QAction::triggered, this, &Sasaki::sl_clearHistory);
+    QObject::connect(m_actionFavorite, &QAction::triggered, this, &Sasaki::sl_openFavorite);
+    QObject::connect(m_actionSettings, &QAction::triggered, this, &Sasaki::sl_openSettings);
 }
 
 ///----------------------------------------------------------------------
@@ -506,10 +507,10 @@ void Sasaki::SaddWidgetToCentralLayout()
  */
 void Sasaki::SconnectWidget()
 {
-    QObject::connect(m_buttonNewTab, SIGNAL(clicked(bool)), this, SLOT(sl_addNewTab()));
-    QObject::connect(m_tabView, SIGNAL(tabCloseRequested(int)), this, SLOT(sl_removeTab(int)));
-    QObject::connect(m_tabView, SIGNAL(currentChanged(int)), this, SLOT(sl_tabChanged(int)));
-    QObject::connect(m_searchEdit, SIGNAL(textChanged(QString)), this, SLOT(sl_searchInPage(QString)));
+    QObject::connect(m_buttonNewTab, &QPushButton::clicked, this, &Sasaki::sl_addNewTab);
+    QObject::connect(m_tabView, &QTabWidget::tabCloseRequested, [this](int index) { this->sl_removeTab(index); } );
+    QObject::connect(m_tabView, &QTabWidget::currentChanged, [this](int index) { this->sl_tabChanged(index); } );
+    QObject::connect(m_searchEdit, &QLineEdit::textChanged, [this](QString str) { this->sl_searchInPage(str); } );
 }
 
 ///----------------------------------------------------------------------
@@ -519,16 +520,16 @@ void Sasaki::SconnectWidget()
  */
 void Sasaki::SconnectDependentWidgAct()
 {
-    QObject::connect(get_currentWebView(), SIGNAL(urlChanged(QUrl)), this, SLOT(sl_urlChanged(QUrl)));
-    QObject::connect(get_currentWebView(), SIGNAL(titleChanged(QString)), this, SLOT(sl_titleChanged(QString)));
-    QObject::connect(get_currentWebView(), SIGNAL(loadStarted()), this, SLOT(sl_loadStarted()));
-    QObject::connect(get_currentWebView(), SIGNAL(loadFinished(bool)), this, SLOT(sl_loadFinished(bool)));
-    QObject::connect(get_currentWebView(), SIGNAL(loadProgress(int)), this, SLOT(sl_progress(int)));
-    QObject::connect(this, SIGNAL(sig_canGoBack()), this, SLOT(sl_canGoBack()));
-    QObject::connect(this, SIGNAL(sig_noBack()), this, SLOT(sl_noBack()));
-    QObject::connect(this, SIGNAL(sig_canGoNext()), this, SLOT(sl_canGoNext()));
-    QObject::connect(this, SIGNAL(sig_noNext()), this, SLOT(sl_noNext()));
-    QObject::connect(get_currentWebView(), SIGNAL(iconChanged(QIcon)), this, SLOT(sl_iconChanged(QIcon)));
+    QObject::connect(get_currentWebView(), &QWebEngineView::urlChanged, [this](QUrl url) { this->sl_urlChanged(url); } );
+    QObject::connect(get_currentWebView(), &QWebEngineView::titleChanged, [this](QString str) { this->sl_titleChanged(str); } );
+    QObject::connect(get_currentWebView(), &QWebEngineView::loadStarted, this, &Sasaki::sl_loadStarted);
+    QObject::connect(get_currentWebView(), &QWebEngineView::loadFinished, [this](bool ok) { this->sl_loadFinished(ok); } );
+    QObject::connect(get_currentWebView(), &QWebEngineView::loadProgress, [this](int progress) { this->sl_progress(progress); } );
+    QObject::connect(this, &Sasaki::sig_canGoBack, this, &Sasaki::sl_canGoBack);
+    QObject::connect(this, &Sasaki::sig_noBack, this, &Sasaki::sl_noBack);
+    QObject::connect(this, &Sasaki::sig_canGoNext, this, &Sasaki::sl_canGoNext);
+    QObject::connect(this, &Sasaki::sig_noNext, this, &Sasaki::sl_noNext);
+    QObject::connect(get_currentWebView(), &QWebEngineView::iconChanged, [this](QIcon icon) { this->sl_iconChanged(icon); } );
 }
 
 ///----------------------------------------------------------------------
