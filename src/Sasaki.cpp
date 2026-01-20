@@ -26,7 +26,7 @@ Sasaki::Sasaki(QWidget *parent): QMainWindow(parent),
     m_actionHome(nullptr),
     m_actionCancel(nullptr),
     m_actionLaunch(nullptr),
-    m_actionPreferedPage(nullptr),
+    m_actionPreferredPage(nullptr),
     m_actionQuit(nullptr),
     m_actionHistory(nullptr),
     m_actionClearHistory(nullptr),
@@ -270,7 +270,7 @@ void Sasaki::ScreateAction()
     m_actionHome = new QAction(tr("Home"), this);
     m_actionCancel = new QAction(tr("Cancel"), this);
     m_actionLaunch = new QAction(tr("Launch"), this);
-    m_actionPreferedPage = new QAction(tr("Favorite"), this);
+    m_actionPreferredPage = new QAction(tr("Favorite"), this);
     m_actionQuit = new QAction(tr("Quit"), this);
     m_actionHistory = new QAction(tr("&History"), this);
     m_actionClearHistory = new QAction(tr("Clear history"), this);
@@ -307,9 +307,9 @@ void Sasaki::SconfigureAction()
     m_actionLaunch->setShortcut(QKeySequence(tr("Enter")));
     m_actionLaunch->setIcon(QIcon("assets/icons/launch.png"));
 
-    m_actionPreferedPage->setIcon(QIcon("assets/icons/star.png"));
-    m_actionPreferedPage->setCheckable(true);
-    m_actionPreferedPage->setEnabled(false);
+    m_actionPreferredPage->setIcon(QIcon("assets/icons/star.png"));
+    m_actionPreferredPage->setCheckable(true);
+    m_actionPreferredPage->setEnabled(false);
 
     m_actionQuit->setShortcut(QKeySequence(tr("alt+f4")));
     m_actionQuit->setIcon(QIcon("assets/icons/quit.png"));
@@ -340,7 +340,7 @@ void Sasaki::SaddActionToMenu()
         m_navigationMenu->addAction(m_actionHome);
         m_navigationMenu->addAction(m_actionCancel);
         m_navigationMenu->addAction(m_actionLaunch);
-        m_navigationMenu->addAction(m_actionPreferedPage);
+        m_navigationMenu->addAction(m_actionPreferredPage);
         m_navigationMenu->addAction(m_actionQuit);
     }
 
@@ -370,8 +370,8 @@ void Sasaki::SconnectAction()
     QObject::connect(m_actionCancel, &QAction::triggered, this, &Sasaki::sl_cancelLoading);
     QObject::connect(m_actionHome, &QAction::triggered, this, &Sasaki::sl_returnHome);
     QObject::connect(m_actionLaunch, &QAction::triggered, [this](){ this->sl_runUrl(); });
-    QObject::connect(m_actionPreferedPage, &QAction::toggled, [this](bool ok) { this->sl_addPageToFavorite(ok); });
-    QObject::connect(m_actionPreferedPage, &QAction::toggled, [this](bool ok){ this->sl_removePageFromFavorite(ok); });
+    QObject::connect(m_actionPreferredPage, &QAction::toggled, [this](bool ok) { this->sl_addPageToFavorite(ok); });
+    QObject::connect(m_actionPreferredPage, &QAction::toggled, [this](bool ok){ this->sl_removePageFromFavorite(ok); });
     QObject::connect(this, &Sasaki::sig_preferredPage, this, &Sasaki::sl_favoritePage);
     QObject::connect(this, &Sasaki::sig_notPreferredPage, this, &Sasaki::sl_notFavoritePage);
     QObject::connect(m_actionHistory, &QAction::triggered, this, &Sasaki::sl_openHistory);
@@ -405,7 +405,7 @@ void Sasaki::SaddActionToToolBar()
     m_toolBar->addAction(m_actionCancel);
     m_toolBar->addWidget(m_urlEdit);
     m_toolBar->addAction(m_actionLaunch);
-    m_toolBar->addAction(m_actionPreferedPage);
+    m_toolBar->addAction(m_actionPreferredPage);
     m_toolBar->addWidget(m_searchEdit);
 }
 
@@ -599,15 +599,20 @@ void Sasaki::SReadWriteHistory()
 
 ///----------------------------------------------------------------------
 
+/**
+ * @brief Sasaki::isPreferred
+ * @return true if the current page is a preferred page
+ */
 bool Sasaki::isPreferred()
 {
+    // if ther is no page yet, quit funcion and return false
     if(page.size() < 1)
         return false;
 
     QFile *read = new QFile("assets/file/star.txt", this);
     if(!(read->open(QIODeviceBase::ReadOnly)))
     {
-        return false;
+        return false; // return false if there is an error in opening file
     }
 
     QString str;
@@ -621,6 +626,10 @@ bool Sasaki::isPreferred()
     read = nullptr;
 
     std::cout << "switched to webView: " << get_currentWebViewIndex() << std::endl;
+
+    //========================================================================
+    //if the str contains the current page's url, emit sig_preferredPage() and return true
+    //otherwise emit sig_notPreferredPage() and return false
 
     if(str.contains(get_currentWebView()->url().toString().simplified()))
     {
@@ -639,6 +648,12 @@ bool Sasaki::isPreferred()
 
 ///----------------------------------------------------------------------
 
+/**
+ * @brief Sasaki::loadSettings
+ * @param page: the current WebView
+ *
+ * load preferred settings previously setted
+ */
 void Sasaki::loadSettings(QWebEngineView *page)
 {
     QSettings saki_settings;
@@ -653,22 +668,18 @@ void Sasaki::loadSettings(QWebEngineView *page)
 
     while(!readWebAttribute->atEnd())
     {
-        QString str = readWebAttribute->readLine().simplified();
-        keyTable.push_back(Sasaki::SlastString(str, "-").simplified());
-        value.push_back(Sasaki::SfirstString(str, "-").simplified());
+        QString str = readWebAttribute->readLine().simplified(); // read all web attribute until the cursor reach the end of file
+        keyTable.push_back(Sasaki::SlastString(str, "-").simplified()); // push the last part of str into keyTable
+        value.push_back(Sasaki::SfirstString(str, "-").simplified()); // push the first part of str into value
     }
 
     int i(0);
-    bool on(false);
 
     while(i < keyTable.size())
     {
-        if(list.contains(keyTable[i]))
-        {
-            on = saki_settings.value(keyTable[i]).toBool();
-
-            if(page != nullptr)
-                page->settings()->setAttribute(static_cast<QWebEngineSettings::WebAttribute>(value[i].toInt()), on);
+        if(list.contains(keyTable[i]) && page != nullptr) // search if the list(allKeys available) contains the keyTable[i] and page is not nullptr
+        {   // change the actual page settings
+            page->settings()->setAttribute(static_cast<QWebEngineSettings::WebAttribute>(value[i].toInt()), saki_settings.value(keyTable[i]).toBool());
         }
 
         i++;
@@ -713,7 +724,7 @@ int Sasaki::sl_addNewTab()
     SconnectDependentWidgAct();
     std::cout << "begin = " << begin << ", last = " << last << std::endl;
 
-    m_actionPreferedPage->setEnabled(true);
+    m_actionPreferredPage->setEnabled(true);
 
     return (begin != last) ? SUCCESS : FAILURE; // if begin is different of last, certainly: a tab was added
 }
@@ -850,6 +861,11 @@ int Sasaki::sl_runUrl()
 
     if(m_tabView->count() > 0)
     {
+        //if the Url doesn't start with --' https:// '-- and --' file:// '-- and --' http:// '--
+        //change it like: https:// + Url
+        if(!(m_urlEdit->text().startsWith("https://")) && !(m_urlEdit->text().startsWith("file://")) && !(m_urlEdit->text().startsWith("http://")))
+            m_urlEdit->setText("https://" + m_urlEdit->text());
+
         get_currentWebView()->setUrl(QUrl(m_urlEdit->text()));
         get_currentWebView()->show();
     }
@@ -1153,15 +1169,13 @@ int Sasaki::sl_openHistory()
 
     if(stor->get_m_historyUrlToRun().toString().isEmpty())
     {
-        delete stor;
-        stor = nullptr;
+        stor->deleteLater();
         return FAILURE;
     }
 
     sl_runUrl(stor->get_m_historyUrlToRun().toString().simplified());
 
-    delete stor;
-    stor = nullptr;
+    stor->deleteLater();
 
     return SUCCESS;
 }
@@ -1178,12 +1192,11 @@ int Sasaki::sl_clearHistory()
     if(!(file->open(QIODeviceBase::WriteOnly)))
         return FAILURE;
 
-    file->remove(file->fileName());
+    file->remove(file->fileName()); // remove history file
 
     file->close();
 
-    delete file;
-    file = nullptr;
+    file->deleteLater();
 
     return SUCCESS;
 }
@@ -1215,18 +1228,14 @@ int Sasaki::sl_addPageToFavorite(bool ok)
     QString str;
     str.clear();
 
-    while(!(read->atEnd())) // read all data in read
-    {
-        str = read->readAll(); // save all content of read into str(QString)
-    }
-
+    str = read->readAll(); // save all content of star.txt into str(QString)
 
     if(!(str.contains(get_currentWebView()->url().toString()))) // if the actual page is not already in prefered page, add it
     {
         QTextStream *out = new QTextStream(read);
 
         *out << get_currentWebView()->title().simplified() << SEPARATOR << get_currentWebView()->url().toString().simplified() << "\n";
-        m_actionPreferedPage->setIcon(QIcon("assets/icons/yellowStar.png"));
+        m_actionPreferredPage->setIcon(QIcon("assets/icons/yellowStar.png"));
 
         std::cout << "page added to favorite" << std::endl;
         delete out;
@@ -1269,7 +1278,6 @@ int Sasaki::sl_removePageFromFavorite(bool ok)
         return FAILURE;
     }
 
-
     QString str;
     str.clear();
 
@@ -1280,8 +1288,13 @@ int Sasaki::sl_removePageFromFavorite(bool ok)
 
     read->close();
 
-
-
+    /*
+     * if str contains the url to remove and the file is opened,
+     * get the title and url of the current page and store them into strToRemove(QString),
+     * remove strToRemove from str,
+     * then write str into file
+     * finally, change icon to unpreferred icon
+     * */
     if(str.contains(get_currentWebView()->url().toString()) && write->open(QIODeviceBase::WriteOnly))
     {
         QString strToRemove = get_currentWebView()->title() + SEPARATOR + get_currentWebView()->url().toString() + "\n"; //page's title, SEPARATOR, page's url and line feed to remove
@@ -1292,7 +1305,7 @@ int Sasaki::sl_removePageFromFavorite(bool ok)
 
         *out << str;
 
-        m_actionPreferedPage->setIcon(QIcon("assets/icons/star.png"));
+        m_actionPreferredPage->setIcon(QIcon("assets/icons/star.png"));
         std::cout << "Page removed from favorite" << std::endl;
 
         delete out;
@@ -1307,12 +1320,15 @@ int Sasaki::sl_removePageFromFavorite(bool ok)
 
 /**
  * @brief Sasaki::sl_favoritePage
- * @return 0 if the page is a favorite page
+ * @return true if the page is a favorite page
  */
 bool Sasaki::sl_favoritePage()
 {
-    m_actionPreferedPage->setChecked(true);
-    m_actionPreferedPage->setIcon(QIcon("assets/icons/yellowStar.png"));
+    //if the current page is a preferred page,
+    //set checked m_actionPreferredPage(QAction),
+    //change icon into preferred icon
+    m_actionPreferredPage->setChecked(true);
+    m_actionPreferredPage->setIcon(QIcon("assets/icons/yellowStar.png"));
 
     return true;
 }
@@ -1321,14 +1337,17 @@ bool Sasaki::sl_favoritePage()
 
 /**
  * @brief Sasaki::sl_notFavoritePage
- * @return 0 if the page is a favorite page
+ * @return true if the page is not a favorite page
  */
 bool Sasaki::sl_notFavoritePage()
 {
-    m_actionPreferedPage->setChecked(false);
-    m_actionPreferedPage->setIcon(QIcon("assets/icons/star.png"));
+    //if the current page is not a preferred page,
+    //set unchecked m_actionPreferredPage(QAction),
+    //change icon into unpreferred icon
+    m_actionPreferredPage->setChecked(false);
+    m_actionPreferredPage->setIcon(QIcon("assets/icons/star.png"));
 
-    return false;
+    return true;
 }
 
 ///----------------------------------------------------------------------
@@ -1341,14 +1360,18 @@ bool Sasaki::sl_notFavoritePage()
  */
 void Sasaki::sl_searchInPage(QString str)
 {
-    if(page.size() < 1)
+    if(page.size() < 1) // if there is no page yet, quit function
         return;
 
-    get_currentWebView()->findText(str);
+    get_currentWebView()->findText(str); // search str
 }
 
 ///----------------------------------------------------------------------
 
+/**
+ * @brief Sasaki::sl_openFavorite
+ * @return 0 if the favorite page's dialog is successfully opened
+ */
 int Sasaki::sl_openFavorite()
 {
     Star *st = new Star(this);
@@ -1358,7 +1381,7 @@ int Sasaki::sl_openFavorite()
     {
         delete st;
         st = nullptr;
-        return FAILURE;
+        return SUCCESS;
     }
 
     sl_runUrl(st->get_m_urlToRun().toString().simplified());
@@ -1372,6 +1395,11 @@ int Sasaki::sl_openFavorite()
 
 ///----------------------------------------------------------------------
 
+/**
+ * @brief Sasaki::sl_openSettings
+ *
+ * open Settigs dialog
+ */
 void Sasaki::sl_openSettings()
 {
     Settings *st = new Settings(get_currentWebView(), this);

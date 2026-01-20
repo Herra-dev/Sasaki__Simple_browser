@@ -9,14 +9,12 @@ History::History(QWidget *parent): QDialog(parent),
     scroll(nullptr)
 {
     setWindowTitle("History");
-    setMinimumSize(500, 600);
+    setMinimumSize(400, 500);
 
     group = new QGroupBox("History", this);
     m_historyUrlToRun = new QUrl;
     m_layout = new QVBoxLayout(this);
     scroll = new QScrollArea(this);
-
-    group->setLayout(m_layout);
 
     updateHistory();
 
@@ -29,11 +27,17 @@ History::History(QWidget *parent): QDialog(parent),
         std::cout << "No history" << std::endl;
     }
 
+    group->setLayout(m_layout);
+
     scroll->setWidget(group);
 }
 
 //---------------------------------------------------------------------------
 
+/**
+ * @brief History::~History
+ * destructor
+ */
 History::~History()
 {
     delete m_historyUrlToRun;
@@ -44,6 +48,10 @@ History::~History()
 
 //---------------------------------------------------------------------------
 
+/**
+ * @brief History::get_m_historyUrlToRun
+ * @return QUrl object
+ */
 QUrl History::get_m_historyUrlToRun()
 {
     return *m_historyUrlToRun;

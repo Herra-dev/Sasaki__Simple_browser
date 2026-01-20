@@ -119,7 +119,7 @@ protected:
     QAction *m_actionHome;
     QAction *m_actionCancel;
     QAction *m_actionLaunch;
-    QAction *m_actionPreferedPage;
+    QAction *m_actionPreferredPage;
     QAction *m_actionQuit;
     QAction *m_actionHistory;
     QAction *m_actionClearHistory;
